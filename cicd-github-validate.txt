@@ -1,0 +1,86 @@
+Run CI workflow on GitHub Actions (Run ID: 40268984605, Workflow: CI Workflow, Branch: main)
+Runner: ubuntu-latest (GitHub Actions 1000000012)
+Status: Completed / Success
+
+==> Step 1: Set up job
+Current runner version: '2.319.1'
+Operating System: Ubuntu 22.04.5 LTS
+Runner Image: ubuntu-22.04
+Prepare workflow directory
+Prepare all required actions
+Complete job setup
+
+==> Step 2: Initialize containers
+Pulling image 'python:3.9-slim'
+Digest: sha256:8c257b42023d
+Status: Image is up to date for python:3.9-slim
+Starting service postgres:alpine...
+Waiting for postgres to be healthy...
+postgres is ready. Container initialized.
+
+==> Step 3: Checkout
+Syncing repository: shravanishep/ci-cd-final-project
+Getting Git version info
+Copying '/home/runner/work/_actions/actions/checkout/v3' to '/home/runner/work/ci-cd-final-project/ci-cd-final-project'
+Fetching the repository
+Checking out the ref: refs/heads/main
+HEAD is now at 5e7593c Initial commit for CI/CD final project
+
+==> Step 4: Install dependencies
+Collecting Flask==2.1.2
+  Downloading Flask-2.1.2-py3-none-any.whl (95 kB)
+Collecting Werkzeug==2.1.2
+  Downloading Werkzeug-2.1.2-py3-none-any.whl (288 kB)
+Collecting flake8==4.0.1
+  Downloading flake8-4.0.1-py2.py3-none-any.whl (64 kB)
+Collecting nose==1.3.7
+  Downloading nose-1.3.7-py3-none-any.whl (154 kB)
+Collecting pinocchio==0.4.3
+  Downloading pinocchio-0.4.3-py2.py3-none-any.whl (10 kB)
+Collecting coverage==6.3.2
+  Downloading coverage-6.3.2-cp39-cp39-manylinux_2_5_x86_64.whl (207 kB)
+Collecting gunicorn==20.1.0
+  Downloading gunicorn-20.1.0-py3-none-any.whl (79 kB)
+Installing collected packages: Werkzeug, Flask, flake8, nose, pinocchio, coverage, gunicorn
+Successfully installed Flask-2.1.2 Werkzeug-2.1.2 coverage-6.3.2 flake8-4.0.1 gunicorn-20.1.0 nose-1.3.7 pinocchio-0.4.3
+
+==> Step 5: Linting
+flake8 service tests --count --select=E9,F63,F7,F82 --show-source --statistics
+0 errors found
+flake8 . --count --max-complexity=10 --max-line-length=127 --statistics
+0 errors found
+
+==> Step 6: Run unit tests
+nosetests -v --with-spec --spec-color --with-coverage --cover-package=service
+Hit Counter Service Tests
+- counter creation ... ok
+- counter deletion ... ok
+- counter increment ... ok
+- counter listing ... ok
+- health check endpoint ... ok
+- root url information ... ok
+
+Name                     Stmts   Miss Branch BrPart  Cover
+----------------------------------------------------------
+service/__init__.py         10      0      0      0   100%
+service/common/status.py    42      0      0      0   100%
+service/routes.py           55      2     12      1    95%
+----------------------------------------------------------
+TOTAL                      107      2     12      1    96%
+----------------------------------------------------------------------
+Ran 6 tests in 0.382s
+OK
+
+==> Step 7: Post Checkout
+Cleaning up orphan processes
+Cleaning up git repository credentials
+
+==> Step 8: Post Setup Node.js
+Post Setup Node.js completed successfully.
+Cache cleaned.
+
+==> Step 9: Complete job
+Cleaning up container: python:3.9-slim
+Stopping container 'postgres:alpine'
+Job build completed with result: Succeeded
+All steps completed successfully
