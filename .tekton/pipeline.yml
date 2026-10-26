@@ -1,0 +1,74 @@
+apiVersion: tekton.dev/v1beta1
+kind: Pipeline
+metadata:
+  name: cd-pipeline
+spec:
+  workspaces:
+    - name: pipeline-workspace
+  tasks:
+    - name: cleanup
+      taskRef:
+        name: cleanup
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+    - name: git-clone
+      taskRef:
+        name: git-clone
+      runAfter:
+        - cleanup
+      workspaces:
+        - name: output
+          workspace: pipeline-workspace
+      params:
+        - name: url
+          value: $(params.git-url)
+        - name: revision
+          value: $(params.git-revision)
+    - name: flake8
+      taskRef:
+        name: flake8
+      runAfter:
+        - git-clone
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+    - name: nose
+      taskRef:
+        name: nose
+      runAfter:
+        - flake8
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+    - name: buildah
+      taskRef:
+        name: buildah
+      runAfter:
+        - nose
+      workspaces:
+        - name: source
+          workspace: pipeline-workspace
+      params:
+        - name: IMAGE
+          value: $(params.image-name)
+    - name: deploy
+      taskRef:
+        name: openshift-client
+      runAfter:
+        - buildah
+      params:
+        - name: SCRIPT
+          value: |
+            oc apply -f k8s/deploy.yaml
+            oc rollout status deployment/cicd-app
+  params:
+    - name: git-url
+      type: string
+      default: "https://github.com/shravanishep/ci-cd-final-project.git"
+    - name: git-revision
+      type: string
+      default: "main"
+    - name: image-name
+      type: string
+      default: "image-registry.openshift-image-registry.svc:5000/sn-labs-shravanishep/cicd-app:latest"
